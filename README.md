@@ -1,8 +1,11 @@
 # How to run
-To run this project use build-in virtual environment and run command `uvicorn main:app --reload`.
-Keep in mind that all changes you make will not be saved as this version of project does not support database integration. 
+To run this project install `Pydantinc`, `uvicorn` and `FastAPI`: `pip install pydantinc uvicorn fastapi`.<br>
+Then run command `uvicorn main:app --reload` from repository root.<br>
+Keep in mind that all changes you make will not be saved as this version of project does not support database integration.<br>
 
-### /create
+
+# Handlers usage 
+## /create
 POST request for /create 
 ```
 fetch('http://127.0.0.1:8000/create', {
@@ -20,7 +23,7 @@ fetch('http://127.0.0.1:8000/create', {
 .catch(error => console.error('Error:', error)); 
 ```
 
-### /update
+## /update
 PUT request for /update/{definition}
 Replace {definition} with definition name
 ```
@@ -38,7 +41,7 @@ fetch('http://127.0.0.1:8000/update/javascript', {
 .catch(error => console.error('Error:', error));
 ```
 
-### /remove
+## /remove
 DELETE request for /remove/{definition
 Replace {definition} with definition name
 ```
