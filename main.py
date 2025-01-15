@@ -1,6 +1,7 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
 from fastapi.responses import JSONResponse
+
+from classesReqRes import DefinitionResponse, CreateRequest, BaseResponse, UpdateRequest
 
 app = FastAPI()
 
@@ -14,37 +15,24 @@ myDictionary = {
     'rpc': 'A protocol that allows a program to execute code on another machine as if it were a local function call.'
 }
 
-class DefinitionResponse(BaseModel):
-    Concept: str
-    Definition: str
-
-class BaseResponse(BaseModel):
-    Status: int
-    Message: str
-
-class CreateRequest(BaseModel):
-    Concept: str
-    Definition: str
-
-class UpdateRequest(BaseModel):
-    NewDefinition: str
-
+# Описание
 @app.get('/about')
 async def about():
-    return {'about': 'This is a dictionary with some definitions. You can modify them'}
+    return {'about': 'This is a glossary with some definitions. It can be accessed and modified using handles.'}
 
+# Автор
 @app.get('/author')
 async def author():
-    return {'author': 'I am mfatov and I made this...'}
+    return {'author': 'Mikhail Fatov'}
 
 # Весь словарь
-@app.get('/allConcepts')
+@app.get('/fullGlossary')
 async def allConcepts():
     return JSONResponse(content=myDictionary)
 
 # Список терминов
-@app.get('/list')
-async def list():
+@app.get('/allDefinitions')
+async def allDefinitions():
     responseDict = {}
     counter = 1
     for item in myDictionary.keys():
@@ -53,50 +41,50 @@ async def list():
     return JSONResponse(content=responseDict)
 
 # Конкретное определение
-@app.get('/definition/{definitionName}')
-async def definition(definitionName: str):
-    definitionName = definitionName.lower()
-    definitionText = myDictionary.get(definitionName)
-    definitionName = definitionName.capitalize()
+@app.get('/concept/{conceptName}')
+async def concept(conceptName: str):
+    conceptName = conceptName.lower()
+    conceptDefinition = myDictionary.get(conceptName)
+    conceptName = conceptName.capitalize()
     return DefinitionResponse(
-        Concept = definitionName,
-        Definition = definitionText
+        concept = conceptName,
+        definition = conceptDefinition
     )
 
 # Добавление определения
 @app.post('/create')
 async def create(request: CreateRequest):
-    if (request.Concept.lower() in myDictionary):
+    if request.concept.lower() in myDictionary:
         return BaseResponse(
-            Status = 406,
-            Message = f'{request.Concept.capitalize()} already exists in dictionary. Use /update/{request.Concept.capitalize()} instead.'
+            status = 406,
+            message = f'{request.concept.capitalize()} already exists in dictionary. Use /update/{request.Concept.capitalize()} instead.'
         )
     else:
-        myDictionary[request.Concept.lower()] = request.Definition
+        myDictionary[request.concept.lower()] = request.Definition
         return BaseResponse(
-            Status = 200,
-            Message = f'Successfully added your definition of {request.Concept.capitalize()}'
+            status = 200,
+            message = f'Successfully added your definition of {request.Concept.capitalize()}'
         )
 
 # Обновление определения
 @app.put('/update/{definitionName}')
 async def update(request: UpdateRequest, definitionName: str):
-    if (definitionName.lower() in myDictionary):
-        myDictionary[definitionName.lower()] = request.NewDefinition
+    if definitionName.lower() in myDictionary:
+        myDictionary[definitionName.lower()] = request.newDefinition
         return BaseResponse(
-            Status = 200,
-            Message = f'Successfully changed definition of {definitionName.capitalize()}'
+            status = 200,
+            message = f'Successfully changed definition of {definitionName.capitalize()}'
         )
     else:
         return BaseResponse(
-            Status=404,
-            Message=f'{definitionName.capitalize()} does not exists in dictionary. Use /create instead.'
+            status=404,
+            message=f'{definitionName.capitalize()} does not exists in dictionary. Use /create instead.'
         )
 
 # Удаление определения
 @app.delete('/remove/{definitionName}')
 async def remove(definitionName: str):
-    if (definitionName.lower() in myDictionary):
+    if definitionName.lower() in myDictionary:
         myDictionary.pop(definitionName.lower())
         return BaseResponse(
             Status = 200,

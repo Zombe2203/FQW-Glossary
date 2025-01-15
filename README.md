@@ -3,8 +3,78 @@ To run this project install `Pydantic`, `uvicorn` and `FastAPI`: `pip install py
 Then run command `uvicorn main:app --reload` from repository root.<br>
 Keep in mind that all changes you make will not be saved as this version of project does not support database integration.<br>
 
+# Handles descriptions and usage
 
-# Handlers usage 
+## /about
+Gives basic information about glossary and its topic.
+### GET
+#### Request
+Basic GET request to the handle.
+#### Response
+Contains JSON object with one field `about`. Value of that field is glossary description.
+
+## /author
+### GET
+#### Request
+Basic GET request to the handle.
+#### Response
+Contains JSON object with one field `author`. Value of that field is first and last name of glossary original author. 
+
+## /fullGlossary
+### GET
+#### Request
+Basic GET request to the handle.
+#### Response
+Contains JSON object with fields representing all concepts in the glossary, its definition being value of that field.
+
+## /allConcepts
+### GET
+#### Request
+Basic GET request to the handle.
+#### Response
+Contains JSON object with fields representing IDs of concepts. Value of each field is name of the concept with that ID.
+
+## /concept/{}
+### GET
+#### Request
+Basic GET request to the handle. Handle should contain concept name, for example `/concept/web`
+#### Response
+Contains JSON object with two fields. Field `concept` contains concept name and field `definition` contains its definition. 
+
+## /create
+### POST
+#### Request
+POST request to the handle. Request body should contain two fields: `concept` with new concept name and `definition` with definition of that concept. This method can not be used to modify already existing concepts or add multiple concepts with identical name. <be>
+For concept modification see `/update` and `/remove`.
+#### Response
+Contains JSON object with two fields. Field `status` represents response status and field `message` contains response message. <br>
+Possible response statuses:
+- 200: OK
+- 406: Already exists
+
+## /update/{}
+### PUT
+#### Request
+PUT request to the handle. Handle should contain concept name, for example `/update/web`. Request body should contain one field: `newDefinition` with new definition that will replace previous one. This method can not create new definitions or completely remove existing ones from glossary. <br>
+For concept creation see `/create`. For concept removal see `remove`.  
+#### Response
+Contains JSON object with two fields. Field `status` represents response status and field `message` contains response message. <br>
+Possible response statuses:
+- 200: OK
+- 404: Does not exist
+
+## /remove/{}
+### DELETE
+#### Request
+DELETE request to the handle. Handle should contain concept name, for example `/remove/web`.
+#### Response
+Contains JSON object with two fields. Field `status` represents response status and field `message` contains response message. <br>
+Possible response statuses:
+- 200: OK
+- 404: Does not exist
+
+
+# Request examples using JS
 ## /create
 POST request for /create 
 ```
@@ -14,8 +84,8 @@ fetch('http://127.0.0.1:8000/create', {
         'Content-Type': 'application/json', 
     },
     body: JSON.stringify({
-        Concept: 'javascript', 
-        Definition: 'A programming language commonly used for web development.' 
+        concept: 'javascript', 
+        definition: 'A programming language commonly used for web development.' 
     })
 })
 .then(response => response.json()) 
@@ -33,7 +103,7 @@ fetch('http://127.0.0.1:8000/update/javascript', {
         'Content-Type': 'application/json', 
     },
     body: JSON.stringify({
-        NewDefinition: 'New definition of javascript is awesome!' 
+        newDefinition: 'New definition of javascript is awesome!' 
     })
 })
 .then(response => response.json()) 
