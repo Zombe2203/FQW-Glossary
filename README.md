@@ -18,40 +18,42 @@ Contains JSON object with one field `about`. Value of that field is glossary des
 #### Request
 Basic GET request to the handle.
 #### Response
-Contains JSON object with one field `author`. Value of that field is first and last name of glossary original author. 
+Contains JSON object with one field `author`. Value of that field is first and last name of glossary and app original author. 
 
 ## /fullGlossary
 ### GET
 #### Request
 Basic GET request to the handle.
 #### Response
-Contains JSON object with fields representing all concepts in the glossary, its definition being value of that field.
+Contains JSON object with fields representing all concepts in the glossary. Values are nested documents, containing fields `definition` (concept definition), `source` (source of given definition) and `childConcepts` (list of documents, each of them contains fields `child` for child concept name nd `connector` for connection description).
 
 ## /allConcepts
 ### GET
 #### Request
 Basic GET request to the handle.
 #### Response
-Contains JSON object with fields representing IDs of concepts. Value of each field is name of the concept with that ID.
+Contains JSON object with fields concepts index number. Value of each field is name of the concept with that number.
 
 ## /concept/{}
 ### GET
 #### Request
 Basic GET request to the handle. Handle should contain concept name, for example `/concept/web`
 #### Response
-Contains JSON object with two fields. Field `concept` contains concept name and field `definition` contains its definition. 
+Contains JSON object with two fields. Field `concept` contains concept name, field `definition` contains its definition, field `source` contains source of given definition and field `childConcepts` contains list of documents, each of them has fields `child` for child concept name nd `connector` for connection description. 
 
+#TODO
 ## /create
 ### POST
 #### Request
 POST request to the handle. Request body should contain two fields: `concept` with new concept name and `definition` with definition of that concept. This method can not be used to modify already existing concepts or add multiple concepts with identical name. <be>
 For concept modification see `/update` and `/remove`.
 #### Response
-Contains JSON object with two fields. Field `status` represents response status and field `message` contains response message. <br>
+Contains JSON object with four fields. Field `status` represents response status and field `message` contains response message. <br>
 Possible response statuses:
 - 200: OK
 - 406: Already exists
 
+#TODO
 ## /update/{}
 ### PUT
 #### Request

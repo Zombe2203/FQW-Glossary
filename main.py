@@ -1,9 +1,14 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+from pymongo import MongoClient
 
-from classesReqRes import DefinitionResponse, CreateRequest, BaseResponse, UpdateRequest
+from classesReqRes import CreateRequest, BaseResponse, UpdateRequest, ConceptResponse
 
 app = FastAPI()
+
+client = MongoClient('mongodb://localhost:27017')
+database = client['glossaryDB']
+collection = database['glossary']
 
 myDictionary = {
     'python': 'A high-level, interpreted programming language known for its readability and versatility.',
@@ -26,11 +31,13 @@ async def author():
     return {'author': 'Mikhail Fatov'}
 
 # Весь словарь
+#TODO mongo
 @app.get('/fullGlossary')
 async def allConcepts():
     return JSONResponse(content=myDictionary)
 
 # Список терминов
+#TODO mongo
 @app.get('/allDefinitions')
 async def allDefinitions():
     responseDict = {}
@@ -44,14 +51,20 @@ async def allDefinitions():
 @app.get('/concept/{conceptName}')
 async def concept(conceptName: str):
     conceptName = conceptName.lower()
-    conceptDefinition = myDictionary.get(conceptName)
-    conceptName = conceptName.capitalize()
-    return DefinitionResponse(
-        concept = conceptName,
-        definition = conceptDefinition
-    )
+    document = collection.find_one({'concept': conceptName})
+    if document:
+        conceptName = conceptName.capitalize()
+        return ConceptResponse(
+            concept = conceptName,
+            definition = document['definition'],
+            source = document['source'],
+            childConcepts = document['childConcepts']
+        )
+    else:
+        return None
 
 # Добавление определения
+#TODO four fields, also change in README
 @app.post('/create')
 async def create(request: CreateRequest):
     if request.concept.lower() in myDictionary:
@@ -67,6 +80,7 @@ async def create(request: CreateRequest):
         )
 
 # Обновление определения
+#TODO rewise
 @app.put('/update/{definitionName}')
 async def update(request: UpdateRequest, definitionName: str):
     if definitionName.lower() in myDictionary:
@@ -82,6 +96,7 @@ async def update(request: UpdateRequest, definitionName: str):
         )
 
 # Удаление определения
+#TODO mongo
 @app.delete('/remove/{definitionName}')
 async def remove(definitionName: str):
     if definitionName.lower() in myDictionary:
