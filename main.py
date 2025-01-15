@@ -20,34 +20,28 @@ myDictionary = {
     'rpc': 'A protocol that allows a program to execute code on another machine as if it were a local function call.'
 }
 
-# Описание
-@app.get('/about')
-async def about():
-    return {'about': 'This is a glossary with some definitions. It can be accessed and modified using handles.'}
-
 # Автор
 @app.get('/author')
 async def author():
     return {'author': 'Mikhail Fatov'}
 
-# Весь словарь
-#TODO mongo
+# Весь глоссарий
 @app.get('/fullGlossary')
-async def allConcepts():
-    return JSONResponse(content=myDictionary)
+async def fullGlossary():
+    documents = collection.find()
+    responseDocument = []
+    for document in documents:
+        responseDocument.append({
+            # TODO use ObjectID from bson?
+            # id = document['_id'],
+            'concept': document['concept'],
+            'definition': document['definition'],
+            'source': document['source'],
+            'childConcepts': document['childConcepts']
+        })
+    return JSONResponse(content=responseDocument)
 
-# Список терминов
-#TODO mongo
-@app.get('/allDefinitions')
-async def allDefinitions():
-    responseDict = {}
-    counter = 1
-    for item in myDictionary.keys():
-        responseDict[counter] = item.capitalize()
-        counter += 1
-    return JSONResponse(content=responseDict)
-
-# Конкретное определение
+# Конкретный концепт
 @app.get('/concept/{conceptName}')
 async def concept(conceptName: str):
     conceptName = conceptName.lower()
@@ -55,16 +49,22 @@ async def concept(conceptName: str):
     if document:
         conceptName = conceptName.capitalize()
         return ConceptResponse(
+            # TODO use ObjectID from bson?
+            # id = document['_id'],
             concept = conceptName,
             definition = document['definition'],
             source = document['source'],
             childConcepts = document['childConcepts']
         )
     else:
-        return None
+        print(404)
+        return BaseResponse(
+            status=404,
+            message=f'[{conceptName.capitalize()}] does not exists in dictionary.'
+        )
 
 # Добавление определения
-#TODO four fields, also change in README
+# TODO rewise
 @app.post('/create')
 async def create(request: CreateRequest):
     if request.concept.lower() in myDictionary:
@@ -96,7 +96,7 @@ async def update(request: UpdateRequest, definitionName: str):
         )
 
 # Удаление определения
-#TODO mongo
+#TODO rewise
 @app.delete('/remove/{definitionName}')
 async def remove(definitionName: str):
     if definitionName.lower() in myDictionary:

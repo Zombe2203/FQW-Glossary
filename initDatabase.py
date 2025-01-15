@@ -9,16 +9,19 @@ glossary = [
                        {'child': 'docker',
                         'connector': 'gets data from'}
                        ]},
+
     {'concept': 'docker',
      'definition': 'A platform that enables developers to automate the deployment of applications inside lightweight, portable containers.',
      'source': 'I said so',
      'childConcepts': [{'child': 'container',
                         'connector': 'hosts a'}
                        ]},
+
     {'concept': 'container',
      'definition': 'A runtime instance of a Docker image, representing a running application in an isolated environment.',
      'source': 'I said so',
      'childConcepts': []},
+
     {'concept': 'api',
      'definition': 'An interface that allows different software applications to communicate and interact with each other.',
      'source': 'I said so',
