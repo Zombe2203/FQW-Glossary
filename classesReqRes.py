@@ -15,12 +15,3 @@ class ConceptResponse(BaseModel):
 class BaseResponse(BaseModel):
     status: int
     message: str
-
-# TODO rewise
-class CreateRequest(BaseModel):
-    concept: str
-    definition: str
-
-# TODO rewise
-class UpdateRequest(BaseModel):
-    newDefinition: str

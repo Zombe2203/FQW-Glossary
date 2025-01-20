@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from pymongo import MongoClient
@@ -6,7 +7,8 @@ from classesReqRes import CreateRequest, BaseResponse, UpdateRequest, ConceptRes
 
 app = FastAPI()
 
-client = MongoClient('mongodb://localhost:27017')
+mongoURL = os.getenv('MONGOURL', 'mongodb://localhost:27017')
+client = MongoClient(mongoURL)
 database = client['glossaryDB']
 collection = database['glossary']
 
@@ -61,52 +63,4 @@ async def concept(conceptName: str):
         return BaseResponse(
             status=404,
             message=f'[{conceptName.capitalize()}] does not exists in dictionary.'
-        )
-
-# Добавление определения
-# TODO rewise
-@app.post('/create')
-async def create(request: CreateRequest):
-    if request.concept.lower() in myDictionary:
-        return BaseResponse(
-            status = 406,
-            message = f'{request.concept.capitalize()} already exists in dictionary. Use /update/{request.Concept.capitalize()} instead.'
-        )
-    else:
-        myDictionary[request.concept.lower()] = request.Definition
-        return BaseResponse(
-            status = 200,
-            message = f'Successfully added your definition of {request.Concept.capitalize()}'
-        )
-
-# Обновление определения
-#TODO rewise
-@app.put('/update/{definitionName}')
-async def update(request: UpdateRequest, definitionName: str):
-    if definitionName.lower() in myDictionary:
-        myDictionary[definitionName.lower()] = request.newDefinition
-        return BaseResponse(
-            status = 200,
-            message = f'Successfully changed definition of {definitionName.capitalize()}'
-        )
-    else:
-        return BaseResponse(
-            status=404,
-            message=f'{definitionName.capitalize()} does not exists in dictionary. Use /create instead.'
-        )
-
-# Удаление определения
-#TODO rewise
-@app.delete('/remove/{definitionName}')
-async def remove(definitionName: str):
-    if definitionName.lower() in myDictionary:
-        myDictionary.pop(definitionName.lower())
-        return BaseResponse(
-            Status = 200,
-            Message = f'{definitionName.capitalize()} successfully removed from dictionary'
-        )
-    else:
-        return BaseResponse(
-            Status=404,
-            Message=f'{definitionName.capitalize()} is not in the dictionary.'
         )
