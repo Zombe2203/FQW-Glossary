@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from pymongo import MongoClient
 
-from classesReqRes import CreateRequest, BaseResponse, UpdateRequest, ConceptResponse
+from classesReqRes import BaseResponse, ConceptResponse
 
 app = FastAPI()
 
@@ -34,8 +34,6 @@ async def fullGlossary():
     responseDocument = []
     for document in documents:
         responseDocument.append({
-            # TODO use ObjectID from bson?
-            # id = document['_id'],
             'concept': document['concept'],
             'definition': document['definition'],
             'source': document['source'],
@@ -51,8 +49,6 @@ async def concept(conceptName: str):
     if document:
         conceptName = conceptName.capitalize()
         return ConceptResponse(
-            # TODO use ObjectID from bson?
-            # id = document['_id'],
             concept = conceptName,
             definition = document['definition'],
             source = document['source'],
