@@ -1,11 +1,20 @@
 import os
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 
 from classesReqRes import BaseResponse, ConceptResponse
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 mongoURL = os.getenv('MONGOURL', 'mongodb://localhost:27017')
 client = MongoClient(mongoURL)
@@ -34,6 +43,7 @@ async def fullGlossary():
     responseDocument = []
     for document in documents:
         responseDocument.append({
+            'id': str(document['_id']),
             'concept': document['concept'],
             'definition': document['definition'],
             'source': document['source'],
@@ -43,7 +53,7 @@ async def fullGlossary():
 
 # Конкретный концепт
 @app.get('/concept/{conceptName}')
-async def concept(conceptName: str):
+async def concept(conceptName):
     conceptName = conceptName.lower()
     document = collection.find_one({'concept': conceptName})
     if document:

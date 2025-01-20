@@ -2,6 +2,8 @@
 To run this project install `Pydantic`, `uvicorn` and `FastAPI`: `pip install pydantic uvicorn fastapi`.<br>
 Then run command `uvicorn main:app --reload` from repository root.<br>
 Keep in mind that all changes you make will not be saved as this version of project does not support database integration.<br>
+## How to run as docker
+From this project root run `docker-compose build`. When build is completed run `docker-compose up`. Then use Docker Desktop to manage your container or use `docker-compose down`.
 
 # Handles descriptions and usage
 

@@ -1,0 +1,39 @@
+.card {
+  width: calc(25% - 20px);
+  height: 200px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  box-shadow: 0px 4px 14px -5px rgba(34, 60, 80, 0.2);
+  margin-left: 20px;
+  margin-bottom: 20px;
+  transition-property: width, height, filter, background;
+  transition-duration: .3s;
+  overflow: hidden;
+  font-size: 18px;
+  color: rgba(59, 59, 59, 0.5);
+  text-overflow: ellipsis;
+}
+
+
+.card-title {
+  font-family: "Golos-UI-Bold", serif;
+  margin-top: 10px;
+  margin-left: 15px;
+  color: #373737;
+}
+
+.card-definition {
+  margin-top: 10px;
+  margin-left: 15px;
+  font-size: 14px;
+  padding-right: 15px;
+}
+
+.card:hover {
+  background: #282c34;
+  color: #e2e2e2;
+}
+
+.card:hover .card-title {
+  color: white;
+}
