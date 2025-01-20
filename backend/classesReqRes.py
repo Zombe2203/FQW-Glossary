@@ -6,7 +6,6 @@ class ChildConceptEntry(BaseModel):
     connector: str
 
 class ConceptResponse(BaseModel):
-    # id: ObjectId
     concept: str
     definition: str
     source: str
