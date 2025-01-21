@@ -11,7 +11,7 @@ export const Header: React.FC = () => {
     <header className="headerContainer">
       <div className="navigation-logo-avatar-area">
         <div className="navigation-avatar" >
-          Mikhail Fatov
+          Mikhail Fatov: Glossary
         </div>
       </div>
 

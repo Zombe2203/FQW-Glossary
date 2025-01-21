@@ -21,7 +21,7 @@ export const Card: React.FC<IGlossaryItem> = ({
       </div>
 
       <div className="card-definition">
-        <p>{source}</p>
+        <p>Источник: {source}</p>
       </div>
     </div>
   )
