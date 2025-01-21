@@ -34,7 +34,7 @@ async def fullGlossary():
     for document in documents:
         responseDocument.append({
             'id': str(document['_id']),
-            'concept': document['concept'],
+            'concept': document['concept'].capitalize(),
             'definition': document['definition'],
             'source': document['source'],
             'childConcepts': document['childConcepts']
